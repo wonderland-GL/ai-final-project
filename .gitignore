@@ -37,6 +37,12 @@ uploads/
 reports/**/*.docx
 reports/**/*.png
 
+# 周报的渲染预览与临时检查文件
+docs/weekly/preview*/
+docs/weekly/*.pdf
+docs/weekly/test_min.docx
+docs/weekly/checks.json
+
 # ---------------- 系统文件 ----------------
 .DS_Store
 Thumbs.db

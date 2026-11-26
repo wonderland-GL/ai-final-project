@@ -91,7 +91,7 @@ physics-lab-tool/
 │  ├─ selfcheck.py            # 不依赖 Streamlit 的核心自检
 │  ├─ check_secrets.py        # 提交前扫密钥
 │  └─ seed_demo.py            # 导出演示 CSV
-├─ docs/                      # 上传 GitHub、安全、踩坑日志、架构图、截图
+├─ docs/                      # 上传 GitHub、安全、踩坑日志、架构图、周报
 ├─ .github/workflows/tests.yml# 推送到 GitHub 后自动跑测试
 ├─ data/                      # 本地数据（已 gitignore）
 ├─ reports/                   # 生成的报告和图（已 gitignore）
