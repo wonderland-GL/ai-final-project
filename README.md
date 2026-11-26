@@ -14,6 +14,7 @@
 ## 课程文档
 
 - [第 14 周进展报告](docs/weekly/第14周进展报告.docx)（3 页，含选题、功能设计、验证与踩坑）
+- [小组计划表](docs/plan/小组计划表.docx)（到 1 月 6 日的时间表与分工）
 - [系统架构与核心调用链](docs/ARCHITECTURE.md)（可直接粘进 draw.io）
 - [踩坑日志](docs/bugs.md)（周报与 PPT 素材）
 - [安全与上传说明](docs/SECURITY.md)
