@@ -1,7 +1,7 @@
-"""生成小组计划表（DOCX），用于发给组员。
+"""生成“产品介绍与推进计划”（DOCX），不含分工。
 
 运行：python docs/plan/build_plan.py
-输出：docs/plan/小组计划表.docx
+输出：docs/plan/项目介绍与计划.docx
 """
 
 from __future__ import annotations
@@ -15,12 +15,11 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Cm, Pt, RGBColor
 
-OUT = Path(__file__).resolve().parent / "小组计划表.docx"
+OUT = Path(__file__).resolve().parent / "项目介绍与计划.docx"
 
 BODY = "宋体"
 HEAD = "黑体"
 LATIN = "Times New Roman"
-W = 17.0
 
 
 def set_run(run, size=9.5, bold=False, chinese=BODY, color=None):
@@ -130,7 +129,7 @@ def add_table(doc, headers, rows, widths, size=8.5, zebra=True):
             p = cell.paragraphs[0]
             p.paragraph_format.space_after = Pt(0)
             p.paragraph_format.line_spacing = 1.0
-            p.alignment = WD_ALIGN_PARAGRAPH.CENTER if index in (0,) else WD_ALIGN_PARAGRAPH.LEFT
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER if index == 0 else WD_ALIGN_PARAGRAPH.LEFT
             set_run(p.add_run(str(value)), size=size)
             if zebra and row_index % 2 == 1:
                 shade(cell, "F7F9FC")
@@ -162,44 +161,71 @@ def build() -> None:
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_after = Pt(1)
-    set_run(p.add_run("期末大作业 · 小组计划表"), size=18, bold=True, chinese=HEAD,
-            color=(0x14, 0x2B, 0x47))
+    set_run(p.add_run("实验数据台 · 产品介绍与推进计划"), size=17, bold=True,
+            chinese=HEAD, color=(0x14, 0x2B, 0x47))
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_after = Pt(1)
-    set_run(p.add_run("项目：实验数据台（AI + 大学物理实验）"), size=10.5, bold=True,
-            chinese=HEAD)
+    set_run(p.add_run("AI + 大学物理实验｜2 人小组"), size=10.5, bold=True, chinese=HEAD)
 
     p = doc.add_paragraph()
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_after = Pt(4)
     set_run(p.add_run(
-        "2 人小组｜更新：第 14 周｜仓库：github.com/wonderland-GL/ai-final-project"
+        "更新：第 14 周｜仓库：github.com/wonderland-GL/ai-final-project"
     ), size=8, color=(0x66, 0x66, 0x66))
 
     para(doc,
-         "给组员的话：先看第二节时间表和第七节“本周三件事”。有不同意见，周三 20:00 前提出；"
-         "没有异议就按这个执行，后面每周只微调，不再重新讨论方向。",
+         "给组员的话：这份文档只讲两件事——产品是什么，以及到 1 月 6 日怎么推进。"
+         "看完回我一句“没问题”或“哪里要改”，我们就不再重复讨论方向。",
          size=9, color=(0x55, 0x55, 0x55), after=3)
 
-    # 一、项目与目标
-    heading(doc, "一、项目与目标", before=2)
+    # 一、产品是什么
+    heading(doc, "一、产品是什么", before=2)
     para(doc,
-         "一句话：把大学物理实验的原始数据，变成“拟合结果 + 不确定度 + 可直接交的 Word 报告”。"
-         "用户是物理、电子、机械、材料专业修大物实验的大一、大二学生；换实验只改 JSON 模板，不改代码。",
+         "一句话：把大学物理实验的原始数据，变成“拟合结果 + 不确定度 + 可直接交的 Word 报告”。",
+         bold=True, indent=True)
+    para(doc,
+         "目标用户是物理、电子、机械、材料等专业修“大学物理实验”的大一、大二学生。"
+         "他们能做完实验，却处理不好数据：非线性模型不会选、不会给初值；软件只给 R²，"
+         "不给参数误差；B 类不确定度靠猜；有效数字和扩展不确定度每次都要查。",
          indent=True)
     para(doc,
-         "最终交付：本地可运行的系统 + 3–5 分钟演示视频 + 汇报 PPT + 第 14–16 周滚动周报；"
-         "源码里不含模型权重和实验数据。")
+         "产品把这条链做成固定流程：选实验模板 → 粘两列数据 → 拟合 → 算不确定度 → 导出报告。"
+         "所有数字由程序计算、可复现；AI 只负责解释和写文字，并且做数字回查。",
+         indent=True)
+    para(doc,
+         "新颖点在于“垂直 + 规范”：不做通用计算器，而是用 JSON 模板把变量、单位、模型、目标公式"
+         "和仪器固定下来，换实验只改配置、不改代码；输出按实验报告的规范排版（三线表、有效数字、k=2）。")
 
-    # 二、现在到哪了
-    heading(doc, "二、现在到哪了（第 14 周）")
+    # 二、功能一览
+    heading(doc, "二、功能一览")
+    add_table(
+        doc,
+        ["功能", "输入", "输出"],
+        [
+            ["① 实验模板库", "选择实验（单摆/弹簧/RC/伏安/牛顿环）",
+             "自动填好变量、单位、模型、目标公式和仪器"],
+            ["② 数据与单位", "粘贴两列数据，或上传 CSV；选择单位",
+             "换算到 SI 的规范数据表，可下载"],
+            ["③ 拟合与诊断", "两列数据 + 模型",
+             "参数 ± 标准误、R²、拟合图、残差图"],
+            ["④ 不确定度评定", "仪器分辨率、抽样次数、置信水平",
+             "A/B 类合成、GUM 与蒙特卡洛对比、直方图、结果 ± U"],
+            ["⑤ Word 报告", "一次完整运行的结果",
+             "三线表、图、结果表达式、误差分析（中文宋体）"],
+        ],
+        widths=[3.4, 6.8, 6.8],
+    )
+
+    # 三、现在做到哪了
+    heading(doc, "三、现在做到哪了（第 14 周）")
     add_table(
         doc,
         ["项目", "状态", "说明"],
         [
-            ["代码", "已完成", "5 个实验模板、拟合、GUM + 蒙特卡洛、Word 导出、23 个单元测试"],
+            ["代码", "已完成", "5 个模板、拟合、GUM + 蒙特卡洛、Word 导出、23 个单元测试"],
             ["仓库", "已完成", "main 已推送，GitHub Actions 自动跑测试与密钥扫描"],
             ["第 14 周报告", "已完成", "3 页，已上传到 docs/weekly/"],
             ["报告截图", "待补", "第 2 页两个截图位：AI 对话、第一版页面"],
@@ -209,55 +235,53 @@ def build() -> None:
         widths=[3.0, 2.0, 12.0],
     )
 
-    # 三、时间表
-    heading(doc, "三、时间表（到 1 月 6 日）")
+    # 四、时间表
+    heading(doc, "四、时间表（到 1 月 6 日）")
     add_table(
         doc,
-        ["周次 / 截止", "本周要做的事", "交付物", "负责", "验收标准"],
+        ["周次 / 截止", "要做的事", "交付物", "验收标准"],
         [
             ["第 14 周\n（现在）",
-             "B 跑通界面并补 2 张截图；A 找 1 份真实实验报告跑 selfcheck 对比；两人确认分工",
-             "3–3.5 页报告定稿（含截图）",
-             "A / B",
+             "补 2 张报告截图；找 1 份真实实验报告跑对比；报告定稿",
+             "3–3.5 页报告（含截图）",
              "截图真实、页数 ≤3.5、已上传仓库"],
             ["第 15 周",
-             "界面接入 GUM + 蒙特卡洛；对比两种方法差异；验证 Word 三线表/中文字体；访谈 2 名物理同学",
+             "界面接入 GUM + 蒙特卡洛；对比两种方法差异；验证 Word 三线表与中文字体；访谈 2 名物理同学",
              "3.5 页报告、对比图、访谈记录",
-             "A 数值\nB 界面",
              "GUM 与 MC 快速差异 <5%；Word 格式正确；访谈有原话"],
             ["第 16 周",
-             "第二台电脑全新环境部署；5 条测试用例；1 万次抽样性能；清理源码（不含 data/models）；4 页滚动报告",
+             "第二台电脑全新环境部署；5 条测试用例；1 万次抽样性能；清理源码；4 页滚动报告",
              "4 页报告、部署截图、测试用例表",
-             "B 部署\nA 测试",
              "断网可运行；5 条用例全过；git ls-files 无数据/模型"],
             ["第 17 周\n（缓冲）",
              "PPT 初稿（10 页内）；3–5 分钟录屏脚本；补“第 14 周 MVP vs 最终版”对比",
              "PPT v1、录屏脚本",
-             "两人",
              "每页一个观点；无 AI 幻觉数字；视频 3–5 分钟"],
             ["第 18 周\n1 月 6 日 24:00",
              "学习通提交 PPT、源码、视频；1 月 7 日课堂交流；准备 3 个可能被问的问题",
              "全部材料",
-             "两人",
              "按时提交；现场能演示、能回答"],
         ],
-        widths=[2.7, 7.4, 3.2, 1.5, 2.2],
+        widths=[2.8, 7.6, 3.4, 3.2],
     )
 
-    # 四、周报内容
-    heading(doc, "四、三份周报分别写什么")
+    # 第二页
+    doc.add_page_break()
+
+    # 五、周报内容
+    heading(doc, "五、三份周报分别写什么", before=0)
     add_table(
         doc,
         ["周次", "页数", "内容要点", "截图配额"],
         [
             ["第 14 周", "3–3.5 页",
-             "背景/用户/功能/架构；MVP 跑通截图；AI 对话；记录方式",
+             "产品背景/用户/功能/架构；MVP 跑通截图；AI 对话；记录方式",
              "4 张"],
             ["第 15 周", "3.5 页",
              "上周压缩成半页；功能迭代跑通；AI 调 Bug；纠正 AI 幻觉；数据结构",
              "4 张"],
             ["第 16 周", "4 页",
-             "前两周压缩成 1 页；本地部署；防幻觉策略；测试用例；两人分工与心得",
+             "前两周压缩成 1 页；本地部署；防幻觉策略；测试用例；项目心得",
              "4 张"],
         ],
         widths=[2.2, 1.8, 9.6, 3.4],
@@ -265,30 +289,6 @@ def build() -> None:
     para(doc,
          "红线：三份周报是滚动累加的，但排版绝不能超过 4 页；每周新增截图不超过 4 张，超了就删旧内容。",
          size=8.5, color=(0x99, 0x33, 0x33), bold=True)
-
-    # 五、分工
-    doc.add_page_break()
-    heading(doc, "五、分工与协作规则", before=0)
-    add_table(
-        doc,
-        ["成员", "负责", "本周产出"],
-        [
-            ["成员 A", "数值核心：拟合、协方差、GUM、蒙特卡洛、单元测试；真实数据验证",
-             "core/fit.py、core/uncertainty.py、测试用例"],
-            ["成员 B", "界面、模板、Word 报告、文档、仓库与截图",
-             "app.py、5 个模板、README、周报"],
-            ["共同", "每周三 20:00 同步 30 分钟；PPT 与录屏一起做；互相 review 对方的提交",
-             "—"],
-        ],
-        widths=[2.2, 9.2, 5.6],
-    )
-    for text in (
-        "• Git：每个任务一次 commit，消息用 feat / fix / docs 前缀；push 前先 pull。",
-        "• 截图：原图放 docs/screenshots/week14/，命名 week14_01_home.png，周报里缩小并排。",
-        "• AI 记录：对话当场截图；AI 出错写进 docs/bugs.md（现象/原因/修复/证据）。",
-        "• 不提交：.env、data/、reports/、模型文件；提交前跑 python scripts/check_secrets.py。",
-    ):
-        para(doc, text, size=8.5, after=1)
 
     # 六、风险
     heading(doc, "六、主要风险与应对")
@@ -309,20 +309,23 @@ def build() -> None:
     )
 
     # 七、本周三件事
-    heading(doc, "七、本周三件事（现在就做）")
+    heading(doc, "七、本周先做三件事")
     for index, text in enumerate((
-        "成员 B：装依赖，运行 streamlit run app.py，走一遍“单摆 → 示例数据 → 拟合”，截 2 张图贴进第 14 周报告。",
-        "成员 A：找 1 份真实的大物实验报告，用 selfcheck.py / 页面跑一遍，记录和手算结果的差异。",
-        "两人：周三 20:00 开 30 分钟会，确认分工、第 15 周任务，以及谁负责访谈。",
+        "运行 streamlit run app.py，走一遍“单摆 → 示例数据 → 拟合”，截 2 张图贴进第 14 周报告。",
+        "找 1 份真实的大物实验报告，用 selfcheck.py / 页面跑一遍，记录和手算结果的差异。",
+        "周三 20:00 开 30 分钟会，确认第 15 周任务和访谈安排。",
     ), 1):
         para(doc, f"{index}. {text}", size=9, after=2)
 
-    # 八、沟通与记录
-    heading(doc, "八、沟通与记录")
+    # 八、提交红线
+    heading(doc, "八、提交红线")
     for text in (
-        "• 固定会议：每周三 20:00，30 分钟；有事提前在群里说，不能默认缺席。",
-        "• 会后在群里发 3 行：决定了什么 / 谁做什么 / 什么时候交。",
-        "• 所有文件进仓库；聊天记录不算交付物，截图和文档才算。",
+        "• 源码不含模型权重和实验数据（data/、models/ 已在 .gitignore）。",
+        "• 周报滚动累加，但最终不超过 4 页。",
+        "• 项目介绍视频 3–5 分钟，展示本地运行和主要功能。",
+        "• 1 月 6 日 24:00 前在学习通提交 PPT、源码、视频。",
+        "• PPT 里的数字必须和程序输出一致，不能有 AI 幻觉。",
+        "• 换一台电脑、断网也能跑通，才算“本地成功运行”。",
     ):
         para(doc, text, size=8.5, after=1)
 
