@@ -1,0 +1,22 @@
+{
+  "id": "iv_curve",
+  "name": "伏安特性（线性段）",
+  "model": "linear",
+  "formula_text": "U = I·R，拟合 I = a·U + b，则 R = 1/a",
+  "y_transform": "none",
+  "variables": {
+    "x": {"name": "电压 U", "unit": "V", "aliases": ["电压", "U"]},
+    "y": {"name": "电流 I", "unit": "A", "aliases": ["电流", "I"]}
+  },
+  "target": {"name": "R", "expr": "1/a", "unit": "ohm", "reference": 100.0},
+  "constants": {},
+  "instruments": [
+    {"name": "数字电压表", "resolution": 0.01, "unit": "V", "variable": "x"},
+    {"name": "数字电流表", "resolution": 0.0001, "unit": "A", "variable": "y"}
+  ],
+  "notes": "只取线性段；电流很小时注意表的分辨率极限。",
+  "demo": {
+    "x": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0],
+    "y": [0.0051, 0.0099, 0.0152, 0.0198, 0.0251, 0.0302]
+  }
+}

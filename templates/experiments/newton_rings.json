@@ -1,0 +1,30 @@
+{
+  "id": "newton_rings",
+  "name": "牛顿环测曲率半径",
+  "model": "linear",
+  "formula_text": "r_k² = k·λ·R，拟合 r² = a·k + b，则 R = a/λ",
+  "y_transform": "square",
+  "variables": {
+    "x": {"name": "暗环序数 k", "unit": "", "aliases": ["环序数", "k"]},
+    "y": {"name": "暗环半径 r", "unit": "m", "aliases": ["半径", "r"]}
+  },
+  "target": {"name": "R", "expr": "a/lam", "unit": "m", "reference": 2.0},
+  "constants": {"lam": 5.893e-07},
+  "instruments": [
+    {"name": "读数显微镜", "resolution": 0.00001, "unit": "m", "variable": "y"}
+  ],
+  "notes": "中心暗斑对应 k=0，不要数错；lam 默认取钠黄光 589.3 nm，可按实际光源修改。",
+  "demo": {
+    "x": [1, 2, 3, 4, 5, 6, 7, 8],
+    "y": [
+      0.00108563,
+      0.00153532,
+      0.00188037,
+      0.00217127,
+      0.00242755,
+      0.00265925,
+      0.0028723,
+      0.00307064
+    ]
+  }
+}

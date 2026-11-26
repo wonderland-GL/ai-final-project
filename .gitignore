@@ -1,0 +1,43 @@
+# ---------------- 密钥与本地配置（绝对不能提交） ----------------
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# ---------------- Python ----------------
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+.idea/
+.vscode/
+
+# ---------------- 本地数据与产物（源码提交不含数据/模型） ----------------
+data/**
+!data/.gitkeep
+reports/**
+!reports/.gitkeep
+models/
+knowledge/
+uploads/
+*.sqlite
+*.sqlite3
+*.db
+*.log
+
+# 生成的报告与图片
+reports/**/*.docx
+reports/**/*.png
+
+# ---------------- 系统文件 ----------------
+.DS_Store
+Thumbs.db
+desktop.ini

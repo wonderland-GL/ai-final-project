@@ -1,0 +1,22 @@
+{
+  "id": "spring_k",
+  "name": "弹簧劲度系数",
+  "model": "linear",
+  "formula_text": "mg = kx，拟合 x = a·m + b，则 k = g/a",
+  "y_transform": "none",
+  "variables": {
+    "x": {"name": "砝码质量 m", "unit": "kg", "aliases": ["质量", "砝码", "m"]},
+    "y": {"name": "伸长量 x", "unit": "m", "aliases": ["伸长", "伸长量", "x"]}
+  },
+  "target": {"name": "k", "expr": "9.80665/a", "unit": "N/m", "reference": 12.3},
+  "constants": {},
+  "instruments": [
+    {"name": "电子天平", "resolution": 0.0001, "unit": "kg", "variable": "x"},
+    {"name": "米尺", "resolution": 0.001, "unit": "m", "variable": "y"}
+  ],
+  "notes": "每加一次砝码等稳定后再读数；弹簧不能超过弹性限度。",
+  "demo": {
+    "x": [0.1, 0.2, 0.3, 0.4, 0.5],
+    "y": [0.081, 0.16, 0.242, 0.318, 0.401]
+  }
+}

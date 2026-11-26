@@ -1,0 +1,22 @@
+{
+  "id": "rc_discharge",
+  "name": "RC 放电时间常数",
+  "model": "exponential",
+  "formula_text": "U = U0·e^(-t/τ)，拟合 U = a·e^(b·t)，则 τ = -1/b",
+  "y_transform": "none",
+  "variables": {
+    "x": {"name": "时间 t", "unit": "s", "aliases": ["时间", "t"]},
+    "y": {"name": "电压 U", "unit": "V", "aliases": ["电压", "U"]}
+  },
+  "target": {"name": "τ", "expr": "-1/b", "unit": "s", "reference": 1.0},
+  "constants": {},
+  "instruments": [
+    {"name": "秒表", "resolution": 0.01, "unit": "s", "variable": "x"},
+    {"name": "数字电压表", "resolution": 0.01, "unit": "V", "variable": "y"}
+  ],
+  "notes": "电压必须为正；采样点覆盖 1 个到 3 个时间常数时拟合最稳。",
+  "demo": {
+    "x": [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0],
+    "y": [5.0, 3.0327, 1.8394, 1.1157, 0.6767, 0.4104, 0.2489]
+  }
+}
